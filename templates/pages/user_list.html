@@ -1,0 +1,62 @@
+{% extends '_base.html' %}
+
+{% block title %}
+home
+{% endblock title %}
+
+{% block content %}
+<input id="searchbar" type ="text">
+
+<ul id="search-list" class="list-group">
+    {% for add_user in addable_users %}
+        {% if add_user != user.username %}
+          <li class="list-group-item">
+              {{add_user}}
+              <button id='{{add_user}}' class="btn btn-primary">Add friend</button>
+          </li>
+        {% endif %}
+    {% endfor %}
+</ul>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+
+<script>
+    let data = {{addable_users|safe}};
+    console.log(data[1]);
+
+
+    // data = data.replace('[','').replace(']','').split(',');
+
+    let searchbar = $("#searchbar");
+    let search_list = $("#search-list");
+
+    searchbar.on('keyup',function(){
+        let val = searchbar.val();
+        console.log(val);
+        search_list.empty();
+        let list = data;
+        console.log(list);
+        for(let i=0; i<list.length; i++) {
+            if (list[i].includes(val)) {
+                search_list.html(search_list.html() + "<li  class='list-group-item'>" + list[i] + "" +
+                    "<button id='" + list[i] + "' class='btn btn-primary'>Add friend</button></li>")
+            }
+        }
+    });
+    $("button").on('click', function(x){
+        $.ajax(
+        {
+        type:"POST",
+        url: "",
+        headers: {'X-CSRFToken': '{{ csrf_token }}'},
+        data: JSON.stringify({request_from_to :('{{user.username}}-'+$(this).attr('id') )}),
+
+        success: function( data )
+        {
+            console.log(data);
+        }
+     })
+    })
+</script>
+
+{% endblock content%}

@@ -1,0 +1,158 @@
+<!-- templates/home.html -->
+{% extends "_base.html" %}
+{% load static %}
+{% block title %}Home{% endblock title %}
+{% block content %}
+
+<link rel="stylesheet" href="{% static 'css/base.css' %}">
+<h1>This is our home page.</h1>
+<div>
+    Friend Requests:
+    <ul class="list-group">
+    {% if user.is_authenticated %}
+    <div class="friend_request_list">
+        {% for friend_req in friend_requests %}
+            <li>
+                <span>{{friend_req.0}} sent you a friend request on {{friend_req.2}}</span>
+                <button id="accept-{{friend_req.1}}-{{friend_req.0}}" class="accept btn btn-primary">Accept</button>
+                <button id="decline-{{friend_req.1}}-{{friend_req.0}}" class="decline btn btn-danger">Decline</button>
+            </li>
+
+        {% endfor %}
+    </div>
+    </ul>
+
+    <div class="d-flex float-right justify-content-end">
+        <ul class=" position-fixed border float-right p-2 d-flex list-group friend_list" style="width:fit-content;right:0;">
+            <h5>Friend List</h5>
+            {% for friend in friends %}
+            <li class="border p-2 col-auto d-flex justify-content-end list-group-item">
+                {{friend}}
+                <button id='open_conv' name='{{friend}}' class="btn btn-success font-size-10px">
+                    Send message
+                </button>
+                <button id="see_profile" name="{{friend}}" class="btn btn-primary">
+                    View profile
+                </button>
+                <button id="delete_friend" name='{{friend}}' class="btn btn-danger">
+                    Delete friend
+                </button>
+            </li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+    </div>
+</div>
+
+<div id="conversation_container" class="position-fixed " style=" background-color:darkolivegreen; left:20px; bottom:0; height: 500px; width: 500px;">
+    <div id="message_top_bar" style="justify-content:center; text-align: center; height: 25px; width: 100%; background-color: darkolivegreen ">
+        <span>Name</span>
+    </div>
+     <div id='message_div' class="d-inline-block h-75 " style="overflow:scroll; width: 100%; position: relative;  background-color: rgba(0,0,255,.1)">
+
+    </div>
+    <div class="messages_textarea" style="margin:0; height: 10%; padding-top: 2px;">
+
+        <textarea style="height:100%; margin: 0; width: 100%" >
+        </textarea>
+       <button id="send_message" class="p-0 m-0" style="right:0 ">
+            Send message
+        </button>
+    </div>
+
+</div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+
+<script>
+    let messages = [];
+
+    $('document').ready(function(){
+        $("#conversation_container").toggle();
+    })
+    $('.accept, .decline').on('click', function(){
+        $.ajax(
+        {
+        type:"POST",
+        url: "",
+        headers: {'X-CSRFToken': '{{ csrf_token }}'
+        },
+        data: {'req_response': $(this).attr('id'),
+                            'request_type': 'friend_request'
+        },
+
+        success: function( data )
+        {
+            console.log(data);
+        }
+     })
+    })
+
+    $('[id=open_conv]').on('click', function(){
+        let conv_container = $("#conversation_container");
+        conv_container.toggle();
+        conv_container.attr('name',$(this).attr('name'));
+        let name = conv_container.attr('name');
+        console.log('{{user.username}}', name)
+        $.ajax({
+            type:'POST',
+            url:'\/get_messages/' + '{{user.username}}-' + name,
+            headers:{'X-CSRFToken': '{{ csrf_token }}'},
+            success: function(data){
+                try {
+
+
+                    data = JSON.parse(data);
+                    for (let i = 0; i < data.length; i++) {
+                        let sender = data[i]['sender']
+
+                        if (String(sender) === String('{{user.id}}')) {
+                            sender = '1';
+                        } else {
+                            sender = '2';
+                        }
+
+                        console.log(sender);
+
+                        $("#message_div").append(
+                            "<div class='dialog-" + sender + "'>" + data[i]['text'] +
+                            "</div>"
+                        )
+                    }
+                }
+                catch (error){
+                    console.log(error);
+                }
+            }
+        })
+    });
+
+    $('#send_message').on('click', function(){
+        let receiver = $("#conversation_container").attr('name');
+        let message_value = $("textarea").val();
+
+        let data = {'receiver': receiver,
+                    'message_value': message_value,
+                    'request_type': 'message_sent'
+            }
+
+        $.ajax(
+        {
+        type:"POST",
+        url: "",
+        headers: {'X-CSRFToken': '{{ csrf_token }}'
+        },
+        data: data,
+
+        success: function( data )
+        {
+            console.log(data);
+        }
+     })
+    $('textarea').val('');
+
+    })
+
+</script>
+
+{% endblock content %}

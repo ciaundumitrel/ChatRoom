@@ -1,0 +1,47 @@
+<!-- chat/templates/chat/index.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <title>Chat Rooms</title>
+</head>
+<body>
+    What chat room would you like to enter?<br>
+    <input id="room-name-input" type="text" size="100"><br>
+    <input id="room-name-submit" type="button" value="Enter">
+
+    <div class="d-flex float-right justify-content-end">
+        <ul class=" position-fixed border float-right p-2 d-flex list-group friend_list" style="width:fit-content;right:0;">
+            <h5>Friend List</h5>
+            {{friends}}friends 
+            {% for friend in friends %}
+            <li class="border p-2 col-auto d-flex justify-content-end list-group-item">
+                {{friend}}
+                <button id='open_conv' name='{{friend}}' class="btn btn-success font-size-10px">
+                    Send message
+                </button>
+                <button id="see_profile" name="{{friend}}" class="btn btn-primary">
+                    View profile
+                </button>
+                <button id="delete_friend" name='{{friend}}' class="btn btn-danger">
+                    Delete friend
+                </button>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+    <script>
+        document.querySelector('#room-name-input').focus();
+        document.querySelector('#room-name-input').onkeyup = function(e) {
+            if (e.keyCode === 13) {  // enter, return
+                document.querySelector('#room-name-submit').click();
+            }
+        };
+
+        document.querySelector('#open_conv').onclick = function(e) {
+            var roomName = document.querySelector("#open_conv").getAttribute('name') + '_{{user.username}}'
+            window.location.pathname = '/chat/' + roomName + '/';
+        };
+    </script>
+</body>
+</html>
