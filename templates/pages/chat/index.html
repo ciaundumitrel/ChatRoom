@@ -30,6 +30,8 @@
             {% endfor %}
         </ul>
     </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+
     <script>
         document.querySelector('#room-name-input').focus();
         document.querySelector('#room-name-input').onkeyup = function(e) {
@@ -37,11 +39,11 @@
                 document.querySelector('#room-name-submit').click();
             }
         };
-
-        document.querySelector('#open_conv').onclick = function(e) {
-            var roomName = document.querySelector("#open_conv").getAttribute('name') + '_{{user.username}}'
+        $("[id='open_conv']").on('click', function(e) {
+            let roomName = $(this).attr('name') + '_{{user.username}}';
+            console.log(roomName);
             window.location.pathname = '/chat/' + roomName + '/';
-        };
+        });
     </script>
 </body>
 </html>

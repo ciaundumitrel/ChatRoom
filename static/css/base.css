@@ -61,3 +61,6 @@ body {
 	right: -10%;
 	transform: rotate(-60deg);
 }
+#message-receiver{
+	background-color: red;
+}

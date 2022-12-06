@@ -47,5 +47,6 @@ class RoomView(LoginRequiredMixin, TemplateView):
         return context
 
 
+
     def dispatch(self, request, *args, **kwargs):
             return super(RoomView, self).dispatch(request, *args, **kwargs)
