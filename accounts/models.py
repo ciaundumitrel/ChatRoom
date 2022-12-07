@@ -1,8 +1,5 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
-from django.core.files.storage import FileSystemStorage
-from django.conf import settings
-import os
 
 
 class MyAccountManager(BaseUserManager):
@@ -40,7 +37,6 @@ def get_profile_image_filepath(self, filename):
 
 def get_default_profile_image():
     return "codingwithmitch/logo_1080_1080.png"
-
 
 
 class Account(AbstractBaseUser):

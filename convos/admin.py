@@ -6,6 +6,7 @@ from convos.models import Conversation, Message
 
 
 class ConversationAdmin(admin.ModelAdmin):
+    readonly_fields = ('id',)
     list_filter = ['user1', 'user2']
 
     class Meta:

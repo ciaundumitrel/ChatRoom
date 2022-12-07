@@ -9,6 +9,7 @@ from friends.models import FriendList
 
 import json
 
+
 class ChatRoomsHomeView(LoginRequiredMixin, TemplateView):
     template_name = "pages/chat/index.html"
 
@@ -19,8 +20,17 @@ class ChatRoomsHomeView(LoginRequiredMixin, TemplateView):
         if friends.get_friends():
             friends = list(friends.get_friends())
 
-        print(friends)
-        context['friends'] = friends
+        conversations = Conversation.get_by_one_user(user=self.request.user)
+        res = {}
+        for friend in friends:
+            for id_ in conversations:
+                res[friend] = id_['id']
+                conversations.remove(id_)
+                break
+
+        print(json.dumps(res))
+
+        context['friends_conversation'] = (res)
 
         return context
 
@@ -29,24 +39,14 @@ class RoomView(LoginRequiredMixin, TemplateView):
     template_name = "pages/chat/room.html"
 
     def get_context_data(self, **kwargs):
-        print(kwargs)
-        context = super(RoomView, self).get_context_data()
-        context['room_name'] = kwargs['room_name']
-        user1, user2 = kwargs['room_name'].split('_')
+        context = super().get_context_data(**kwargs)
+        conv = Conversation.get_by_pk(pk=kwargs['room_name'])
 
-        user1 = Account.objects.get(username=user1)
-        user2 = Account.objects.get(username=user2)
-
-        print(user1, user2)
-        conv = Conversation.get(user1=user1, user2=user2)
-
-        messages = Message.objects.filter(conversation=conv[0]).values('timestamp', 'text', 'sender')
+        messages = Message.objects.filter(conversation=conv).values('timestamp', 'text', 'sender')
         data = list(messages)
         context['messages'] = json.dumps(data, default=str)
 
         return context
-
-
 
     def dispatch(self, request, *args, **kwargs):
             return super(RoomView, self).dispatch(request, *args, **kwargs)

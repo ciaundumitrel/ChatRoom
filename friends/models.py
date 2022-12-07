@@ -8,8 +8,8 @@ from django.utils import timezone
 
 
 class FriendList(models.Model):
-    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='user')
-    friends = models.ManyToManyField(settings.AUTH_USER_MODEL, blank=True, related_name='friends')
+    user = models.OneToOneField('accounts.Account', on_delete=models.CASCADE, related_name='user')
+    friends = models.ManyToManyField('accounts.Account', blank=True, related_name='friends')
 
     def __str__(self):
         return self.user.username
@@ -41,8 +41,8 @@ class FriendList(models.Model):
 
 
 class FriendRequest(models.Model):
-    sender = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="sender")
-    receiver = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="receiver")
+    sender = models.ForeignKey('accounts.Account', on_delete=models.CASCADE, related_name="sender")
+    receiver = models.ForeignKey('accounts.Account', on_delete=models.CASCADE, related_name="receiver")
     is_active = models.BooleanField(blank=False, null=False, default=True)
     timestamp = models.DateTimeField(auto_now_add=True)
 

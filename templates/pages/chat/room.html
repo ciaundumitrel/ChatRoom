@@ -24,11 +24,11 @@
         val = JSON.parse(val);
         for(let i=0; i<val.length; i++){
             if('{{user.id}}' === String(val[i]['sender'])){
-                $("#messages").append("<div id='message-sender' style='text-align: right'> " +val[i]['text'] + " </div>")
+                $("#messages").append("<div id='message-sender'> " +val[i]['text'] + " </div>")
             }
 
             else{
-                $("#messages").append("<div id='message-receiver' style='text-align: left'> " +val[i]['text'] + " </div>")
+                $("#messages").append("<div id='message-receiver'> " +val[i]['text'] + " </div>")
             }
         }
         const roomName = JSON.parse(document.getElementById('room-name').textContent);
@@ -47,11 +47,11 @@
             console.log(data)
 
            if('{{user.username}}' === String(data['sender'])){
-                $("#messages").append("<div id='message-sender' style='text-align: right'> " +data['message'] + " </div>")
+                $("#messages").append("<div id='message-sender' > " +data['message'] + " </div>")
             }
 
             else{
-                $("#messages").append("<div id='message-receiver' style='text-align: left'> " + data['message'] + " </div>")
+                $("#messages").append("<div id='message-receiver' > " + data['message'] + " </div>")
             }
         };
 

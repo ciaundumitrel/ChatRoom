@@ -18,49 +18,33 @@ body {
   --main-background-color: black;
 }
 
-  .dialog-1{
-	  max-width: 50%;
-	  padding: 5px;
-  	background-color: var(--main-dark-color);
-  	border-radius: 10%;
-    margin-bottom: 10px;
-    color:white;
-}
-
-.left-point{
-	width: 0;
-	height: 0;
-	border-left: 2vh solid transparent;
-	border-right: 2vh solid transparent;
-	border-top: 10vh solid var(--main-dark-color);
-	position: absolute;
-	top: 45%;
-	left: -10%;
-	transform: rotate(60deg);
-}
-
-.dialog-2{
-   max-width: 45%;
-	margin-left:50%;
+#message-receiver{
+	text-align: left;
+    max-width: 45%;
+	width: fit-content;
     padding: 5px;
-  	background-color: var(--main-light-color);
-  	border-radius: 10%;
-	display: block;
+    overflow-wrap: break-word;
+
+  	background-color: darkgrey;
+  	border-radius: 15px;
+	margin-bottom: 15px;
   	right: 0;
 	color: white;
 }
 
-.right-point{
-	width: 0;
-	height: 0;
-	border-left: 2vh solid transparent;
-	border-right: 2vh solid transparent;
-	border-top: 10vh solid var(--main-light-color);
-	position: absolute;
-	top: 45%;
-	right: -10%;
-	transform: rotate(-60deg);
+
+#message-sender{
+    margin-left: auto;
+    border: 1px solid black;
+    margin-right: 2%;
+    overflow-wrap: break-word;
+	text-align: left;
+ 	max-width: 50%;
+	width:fit-content;
+    padding: 5px;
+  	background-color: whitesmoke;
+  	border-radius: 15px;
+    margin-bottom: 14px;
+    color:black;
 }
-#message-receiver{
-	background-color: red;
-}
+
