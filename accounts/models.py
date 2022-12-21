@@ -50,6 +50,7 @@ class Account(AbstractBaseUser):
     is_superuser = models.BooleanField(default=False)
     profile_image = models.ImageField(max_length=255, upload_to=get_profile_image_filepath, null=True, blank=True,
                                       default=get_default_profile_image)
+
     hide_email = models.BooleanField(default=True)
     USERNAME_FIELD = 'username'
     REQUIRED_FIELDS = ['email']
@@ -60,7 +61,7 @@ class Account(AbstractBaseUser):
         return self.username
 
     def get_profile_image_filename(self):
-        return str(self.profile_image)[str(self.profile_image).index('profile_images/' + str(self.pk) + "/"):]
+        return str(self.profile_image)[str(self.profile_image).index('media/profile_images/' + str(self.pk) + "/"):]
 
     # For checking permissions. to keep it simple all admin have ALL permissons
     def has_perm(self, perm, obj=None):

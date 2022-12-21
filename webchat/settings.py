@@ -48,7 +48,8 @@ INSTALLED_APPS = [
     'friends',
     'convos',
     'chat',
-
+    'feed',
+    'utils',
     # 'accounts.apps.AccountsConfig',
     # Third party
     'crispy_forms',
@@ -79,6 +80,8 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'django.template.context_processors.media',
+
             ],
         },
     },
@@ -161,4 +164,6 @@ CHANNEL_LAYERS = {
     },
 
 }
-django.setup()
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_URL = '/media/'
+MEDIA_DIR = BASE_DIR / 'media'

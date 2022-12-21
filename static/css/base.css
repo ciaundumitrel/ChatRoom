@@ -3,20 +3,7 @@ body {
     padding-top: 4.5rem;
   }
 
-  h1 {
-      color: red;
-    }
 
-  img.bookcover {
-    height: 300px;
-    width: auto;
-  }
-
-:root {
-  --main-light-color: #f9bbb1;
-  --main-dark-color: #481b0b;
-  --main-background-color: black;
-}
 
 #message-receiver{
 	text-align: left;
@@ -48,3 +35,53 @@ body {
     color:black;
 }
 
+
+.post-creation{
+  display: grid;
+  margin: auto;
+  width: 50%;
+  padding: 10px;
+}
+.post-textarea{
+    display: inline-block;
+}
+
+.posts-container{
+    display: grid;
+    margin-left: auto;
+    margin-right: auto;
+    width: 70%;
+}
+.post-div{
+    padding: 20px;
+    border: 1px solid gray;
+
+}
+.reactions{
+    border: #481b0b 2px solid;
+    margin-bottom: 0;
+    cursor: pointer;
+}
+.liked{
+    color: red;
+}
+.bookmarked{
+    color: blue;
+}
+.reposted{
+    color: yellow;
+}
+.comments{
+    margin-left: auto;
+    margin-right: auto;
+    margin-top:0;
+    background-color: #eeeeee;
+    border: 2px solid black;
+    border-top: 0;
+}
+.hidden{
+    display: none;
+}
+.comment{
+    border-top: 2px solid black;
+}

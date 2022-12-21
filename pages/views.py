@@ -1,16 +1,14 @@
 import json
-
+from datetime import datetime
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponse
 from django.utils.decorators import method_decorator
 from django.views.generic import TemplateView, ListView
-
 from accounts.models import Account
+from feed.models import PostList, Comment
 from friends.models import FriendRequest, FriendList
 from convos.models import Conversation, Message
-
-# Create your views here.
 
 
 class HomePageView(LoginRequiredMixin, TemplateView):
@@ -19,56 +17,74 @@ class HomePageView(LoginRequiredMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data()
         login_user_id = self.request.user.id
-
         friend_requests = FriendRequest.objects.filter(receiver=login_user_id, is_active=True)
         data = []
+
         for fr in friend_requests:
             aux = [fr, fr.receiver, fr.timestamp]
             data.append(aux)
+
         context['friend_requests'] = data
 
         friends, _ = FriendList.objects.get_or_create(user=self.request.user)
+        relevant_posts = []
         if friends.get_friends():
-            friends = list(friends.get_friends())
+            friends_list = list(friends.get_friends())
+            context['friends'] = friends_list
+            for friend in friends_list:
+                f = Account.objects.get(username=friend)
+                posts, _ = PostList.objects.get_or_create(owner=f)
+                if posts.posts.all():
+                    this_posts = ([[f.username, f.profile_image, str(p.created), str(p.text), p.id,
+                                    'liked' if p.id in list(posts.liked_posts.values_list('id', flat=True)) else '',
+                                    'bookmarked' if p.id in list(
+                                        posts.bookmarked_posts.values_list('id', flat=True)) else '',
+                                    'reposted' if p.id in list(
+                                        posts.reposted_posts.values_list('id', flat=True)) else '',
+                                    [comment for comment in Comment.objects.filter(post=p)]]
+                                   for p in posts.posts.all()])
+                    for post in this_posts:
+                        relevant_posts.append(post)
 
-            print(friends)
-            context['friends'] = friends
+        posts, _ = PostList.objects.get_or_create(owner=self.request.user)
+
+        if posts.posts.all():
+            new_list = [
+                [self.request.user.username, str(self.request.user.profile_image), str(p.created), str(p.text), p.id,
+                 'liked' if p.id in list(posts.liked_posts.values_list('id', flat=True)) else '',
+                 'bookmarked' if p.id in list(posts.bookmarked_posts.values_list('id', flat=True)) else '',
+                 'reposted' if p.id in list(posts.reposted_posts.values_list('id', flat=True)) else '',
+                 [comment.get_comment_data() for comment in Comment.objects.filter(post=p)]]
+                for p in posts.posts.all()]
+            for post in new_list:
+                relevant_posts.append(post)
+
+        relevant_posts.sort(key=lambda x: datetime.strptime(x[2], "%Y-%m-%d %H:%M:%S.%f%z"))
+        context['posts'] = relevant_posts
 
         return context
 
     def post(self, request, *args, **kwargs):
-        # data = json.load(request.headers)
-
         request_type = request.POST.dict()['request_type']
         if request_type == 'friend_request':
             request_data = request.POST.dict()['req_response']
             action, receiver, sender = request_data.split('-')
-
             sender_id = Account.objects.get(username=sender).id
             sender = Account.objects.get(username=sender)
             receiver_id = Account.objects.get(username=receiver).id
             receiver = Account.objects.get(username=receiver)
-
             friend_request = FriendRequest.objects.get(sender=sender_id, receiver=receiver_id)
-
-            print(friend_request.receiver, friend_request.sender)
-
             if friend_request:
                 if 'accept' in action:
                     update_notification = friend_request.accept()
                     Conversation.objects.create(user1=receiver, user2=sender)
-                    print(update_notification)
                     return HttpResponse('Accepted friend request')
                 elif 'decline' in action:
                     update_notification = friend_request.decline()
-                    print(update_notification)
                     return HttpResponse('Declined friend request request')
-
             else:
                 return HttpResponse('Failes')
-
         else:
-            print(request_type)
             return HttpResponse('123')
 
 

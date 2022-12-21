@@ -1,48 +1,17 @@
-<!-- chat/templates/chat/index.html -->
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="utf-8"/>
-    <title>Chat Rooms</title>
-</head>
-<body>
-    What chat room would you like to enter?<br>
-    <input id="room-name-input" type="text" size="100"><br>
-    <input id="room-name-submit" type="button" value="Enter">
+{% extends '_base.html' %}
+{% block content %}
+<div>
+    {% include 'pages/chat/room.html' %}
+</div>
 
-    <div class="d-flex float-right justify-content-end">
-        <ul class=" position-fixed border float-right p-2 d-flex list-group friend_list" style="width:fit-content;right:0;">
-            <h5>Friend List</h5>
-            {{friends_conversation}}
-            {% for friend, id in friends_conversation.items %}
-            <li class="border p-2 col-auto d-flex justify-content-end list-group-item">
-                {{friend}}
-                <button id='open_conv' name='{{id}}' class="btn btn-success font-size-10px">
-                    Send message
-                </button>
-                <button id="see_profile" name="{{friend}}" class="btn btn-primary">
-                    View profile
-                </button>
-                <button id="delete_friend" name='{{friend}}' class="btn btn-danger">
-                    Delete friend
-                </button>
-            </li>
-            {% endfor %}
-        </ul>
-    </div>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
 
-    <script>
-        document.querySelector('#room-name-input').focus();
-        document.querySelector('#room-name-input').onkeyup = function(e) {
-            if (e.keyCode === 13) {  // enter, return
-                document.querySelector('#room-name-submit').click();
-            }
-        };
-        $("[id='open_conv']").on('click', function(e) {
-            let roomName = $(this).attr('name');
-            window.location.pathname = '/chat/' + roomName + '/';
-        });
-    </script>
-</body>
-</html>
+<script>
+    $("[id='open_conv']").on('click', function(e) {
+        let roomName = $(this).attr('name');
+        console.log(roomName);
+        window.location.pathname = '/chat/' + roomName + '/';
+
+    });
+</script>
+{% endblock %}

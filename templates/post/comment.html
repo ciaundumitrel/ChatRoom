@@ -1,0 +1,16 @@
+{% load static %}
+{{ request.user.id|json_script:"user_id" }}
+
+{% block comment %}
+
+    <div class="comment">
+        <img src="{% get_media_prefix %}{{comment.1}}" style="border-radius: 40%; display:inline; max-width: 30px; max-height: 30px;margin-top: 0;" >
+
+        <span style="color:dimgrey;">
+            {{comment.2}}
+        </span>
+        {{comment.0}}
+
+    </div>
+
+{% endblock %}

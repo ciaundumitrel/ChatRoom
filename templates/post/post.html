@@ -1,0 +1,40 @@
+{% load static %}
+{% block post %}
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<div style="margin-top: 30px;">
+    <div>
+        <img src="{% get_media_prefix %}{{img}}" style="border-radius: 80px; display:inline; max-width: 80px; max-height: 80px;">
+        <h5 style="display: inline;">{{poster}}</h5>
+    </div>
+
+    <div style="margin-left: 80px">
+
+        <div class="post-div">
+                <h3>
+                    {{text}}
+                </h3>
+            <span>{{time}}</span>
+        </div>
+
+        <div class="reactions" style="padding:5px;">
+            <span><i class="reaction fa fa-heart {{liked}}" action='1' post-id="{{id}}" aria-hidden="true" style="margin-right:10px; font-size:36px"></i></span>
+            <span><i class="reaction fa fa-comment" action='2' post-id={{id}} aria-hidden="true" style="margin-right:10px; font-size:36px"></i></span>
+            <span><i class="reaction fa fa-retweet {{reposted}}" action='3' post-id={{id}} aria-hidden="true" style="margin-right:10px; font-size:36px"></i></span>
+            <span><i class="reaction fa fa-bookmark-o {{bookmarked}}" action='4' post-id={{id}} aria-hidden="true"  style=" margin-right:10px;font-size:36px"></i></span>
+        </div>
+        <div class="comments hidden" post-id="{{id}}">
+            <img src="{% get_media_prefix %}{{img}}" style="border-radius: 40px; display:inline; max-width: 80px; max-height: 80px;margin-top: 0;" >
+            <textarea post-id={{id}}>Text</textarea>
+            <button class="post-comment" post-id="{{id}}">Comment</button>
+                {% for comment in comments%}
+                    {% include 'post/comment.html' with comment=comment %}
+                {% endfor %}
+
+        </div>
+
+    </div>
+</div>
+
+
+{% endblock %}

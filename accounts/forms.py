@@ -12,3 +12,12 @@ class RegistrationForm(UserCreationForm):
         model = Account
         fields = ['email', 'username']
 
+
+class EditProfileForm(forms.ModelForm):
+    profile_image = forms.ImageField(required=False)
+    username = forms.CharField(max_length=12, required=False)
+
+    class Meta:
+        model = Account
+        fields = ['username', 'profile_image']
+

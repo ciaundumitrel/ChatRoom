@@ -1,11 +1,5 @@
 from django.db import models
 
-# Create your models here.
-from django.db import models
-from django.conf import settings
-from django.utils import timezone
-# Create your models here.
-
 
 class FriendList(models.Model):
     user = models.OneToOneField('accounts.Account', on_delete=models.CASCADE, related_name='user')
@@ -15,7 +9,6 @@ class FriendList(models.Model):
         return self.user.username
 
     def add_friend(self, account):
-        print('friends=', self.friends.all())
         if account not in self.friends.all():
             self.friends.add(account)
             self.save()
@@ -36,6 +29,9 @@ class FriendList(models.Model):
         else:
             return False
 
+    def get_friends_id(self):
+        return [str(friend.id) for friend in self.friends.all()]
+
     def get_friends(self):
         return [str(friend) for friend in self.friends.all()]
 
@@ -54,7 +50,6 @@ class FriendRequest(models.Model):
         Accept friend request
         """
         receiver_friend_list, _ = FriendList.objects.get_or_create(user=self.receiver)
-        print(receiver_friend_list)
         if receiver_friend_list:
             receiver_friend_list.add_friend(self.sender)
             sender_friend_list, _ = FriendList.objects.get_or_create(user=self.sender)

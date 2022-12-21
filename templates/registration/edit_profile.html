@@ -1,0 +1,20 @@
+{% extends '_base.html' %}
+
+{% block title %}Edit Profile Page{% endblock title %}
+{% block content %}
+    {% if form.instance.username == user.username %}
+    <div class="row my-3 p-3">
+        <h1>This is the edit profile page for {{user.username}}</h1>
+    </div>
+    <form method="post" enctype="multipart/form-data">
+
+        {% csrf_token %}
+        {{ form.as_p }}
+    <button type="submit">Update Profile</button>
+
+    </form>
+    {% else %}
+        <h1>Sneaky bastard</h1>
+
+    {% endif %}
+{% endblock content %}

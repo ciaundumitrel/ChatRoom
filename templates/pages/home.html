@@ -5,11 +5,8 @@
 {% block content %}
 
 <link rel="stylesheet" href="{% static 'css/base.css' %}">
-<h1>This is our home page.</h1>
 <div>
-    Friend Requests:
     <ul class="list-group">
-    {% if user.is_authenticated %}
     <div class="friend_request_list">
         {% for friend_req in friend_requests %}
             <li>
@@ -17,55 +14,52 @@
                 <button id="accept-{{friend_req.1}}-{{friend_req.0}}" class="accept btn btn-primary">Accept</button>
                 <button id="decline-{{friend_req.1}}-{{friend_req.0}}" class="decline btn btn-danger">Decline</button>
             </li>
-
+        {% empty %}
+            You have no friend requests :( retard
         {% endfor %}
     </div>
     </ul>
-
-    <div class="d-flex float-right justify-content-end">
-        <ul class=" position-fixed border float-right p-2 d-flex list-group friend_list" style="width:fit-content;right:0;">
-            <h5>Friend List</h5>
-            {% for friend in friends %}
-            <li class="border p-2 col-auto d-flex justify-content-end list-group-item">
-                {{friend}}
-                <button id='open_conv' name='{{friend}}' class="btn btn-success font-size-10px">
-                    Send message
-                </button>
-                <button id="see_profile" name="{{friend}}" class="btn btn-primary">
-                    View profile
-                </button>
-                <button id="delete_friend" name='{{friend}}' class="btn btn-danger">
-                    Delete friend
-                </button>
-            </li>
-            {% endfor %}
-        </ul>
-        {% endif %}
+</div>
+<div class="post-creation">
+    <h5 style="display: inline-block">New post </h5>
+    <textarea class="post-textarea"></textarea>
+    <div>
+       <button class="w-50px btn btn-success" id="create_post_button">Submit Post</button>
     </div>
 </div>
 
-<div id="conversation_container" class="position-fixed " style=" background-color:darkolivegreen; left:20px; bottom:0; height: 500px; width: 500px;">
-    <div id="message_top_bar" style="justify-content:center; text-align: center; height: 25px; width: 100%; background-color: darkolivegreen ">
-        <span>Name</span>
-    </div>
-     <div id='message_div' class="d-inline-block h-75 " style="overflow:scroll; width: 100%; position: relative;  background-color: rgba(0,0,255,.1)">
-
-    </div>
-    <div class="messages_textarea" style="margin:0; height: 10%; padding-top: 2px;">
-
-        <textarea style="height:100%; margin: 0; width: 100%" >
-        </textarea>
-       <button id="send_message" class="p-0 m-0" style="right:0 ">
-            Send message
-        </button>
-    </div>
+<hr>
+<div class="posts-container" >
+    {% for post in posts%}
+        <div>
+            {% include 'post/post.html' with poster=post.0 img=post.1 time=post.2 text=post.3 id=post.4 liked=post.5 bookmarked=post.6 reposted=post.7 comments=post.8 %}
+        </div>
+    {% endfor %}
 
 </div>
+
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
 
 <script>
     let messages = [];
+    $("#create_post_button").on('click', function(){
+        let post_text = $(".post-textarea").val();
+        $(".post-textarea").val('');
+
+        $.ajax({
+            type: 'POST',
+            url: '/creation_post/',
+            headers: {'X-CSRFToken': '{{ csrf_token }}'},
+            data:{
+                'text': post_text,
+                'sender': '{{user.username}}',
+            },
+            success: function(data){
+                console.log(data)
+            }
+        })
+    })
 
     $('document').ready(function(){
         $("#conversation_container").toggle();
@@ -78,7 +72,7 @@
         headers: {'X-CSRFToken': '{{ csrf_token }}'
         },
         data: {'req_response': $(this).attr('id'),
-                            'request_type': 'friend_request'
+                'request_type': 'friend_request'
         },
 
         success: function( data )

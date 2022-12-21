@@ -1,24 +1,37 @@
 <!-- chat/templates/chat/room.html -->
 {% extends '_base.html' %}
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="utf-8"/>
-    <title>Chat Room</title>
-</head>
-<body>
 {% block content %}
-    <div style="width:90%; border: 5px solid black; height: 500px; overflow-y: scroll" id="messages">
+
+<div class="container">
+
+  <div class="row">
+
+    <div id="user_container" class="col-sm-2">
+            {% for friend, id in friends_conversation.items %}
+            <div id="open_conv" name="{{id}}" style="height:50px; padding: 20px; border: 2px solid black;" >
+                    {{friend}}
+            </div>
+        {% endfor %}
+    </div>
+    <div class="col">
+
+        <div style="width:900px; border: 5px solid black; height: 500px; overflow-y: scroll; " id="messages">
+        </div>
+    </div>
 
     </div>
+
     <input id="chat-message-input" type="text" size="100"><br>
 
     <input id="chat-message-submit" type="button" value="Send">
 
-    {{ room_name|json_script:"room-name" }}
+
+</div>
+{{ room_name|json_script:"room-name" }}
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
 
     <script>
+
 
         let val = '{{messages|safe}}'.replace('\\', '\\\\');
         val = JSON.parse(val);
@@ -44,7 +57,12 @@
 
         chatSocket.onmessage = function(e) {
             const data = JSON.parse(e.data);
-            console.log(data)
+
+            if (data['typing']) {
+                console.log('typing..')
+                return 0;
+            }
+
 
            if('{{user.username}}' === String(data['sender'])){
                 $("#messages").append("<div id='message-sender' > " +data['message'] + " </div>")
@@ -53,6 +71,8 @@
             else{
                 $("#messages").append("<div id='message-receiver' > " + data['message'] + " </div>")
             }
+            $("#messages").scrollTop($('#messages')[0].scrollHeight);
+
         };
 
         chatSocket.onclose = function(e) {
@@ -69,7 +89,6 @@
         document.querySelector('#chat-message-submit').onclick = function(e) {
             const messageInputDom = document.querySelector('#chat-message-input');
             const message = messageInputDom.value;
-
             let sender = roomName.replace('{{user.username}}', '').replace('_', '');
             chatSocket.send(JSON.stringify({
                 'sender': '{{user.username}}',
@@ -79,7 +98,25 @@
             }));
 
             messageInputDom.value = '';
+
         };
+         $("[id='open_conv']").on('click', function(e) {
+             let roomName = $(this).attr('name');
+             console.log(roomName);
+             window.location.pathname = '/chat/' + roomName + '/';
+
+    });
+         // $("#chat-message-input").on('input', function(){
+         //    chatSocket.send(JSON.stringify({
+         //        'typing': 'false'
+         //    })
+         //
+         // });
+
+        $(document).ready(function(){
+            $("#messages").scrollTop($('#messages')[0].scrollHeight);
+
+        })
     </script>
 {% endblock %}
 

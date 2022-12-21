@@ -1,14 +1,20 @@
 from django.db import models
 from django.conf import settings
-from django.db.models import DO_NOTHING
 from django.utils import timezone
 
 # Create your models here.
 
 
 class Conversation(models.Model):
-    user1 = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, blank=True, default='1', related_name='user1')
-    user2 = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, blank=True, default='1', related_name='user2')
+    user1 = models.ForeignKey(settings.AUTH_USER_MODEL,
+                              on_delete=models.CASCADE,
+                              blank=True, default='1',
+                              related_name='user1')
+
+    user2 = models.ForeignKey(settings.AUTH_USER_MODEL,
+                              on_delete=models.CASCADE,
+                              blank=True, default='1',
+                              related_name='user2')
 
     def __str__(self):
         return "{}-{} ".format(str(self.user1), str(self.user2))
@@ -38,7 +44,7 @@ class Message(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True)
     text = models.CharField(max_length=100)
     conversation = models.ForeignKey('convos.Conversation', on_delete=models.CASCADE, null=True)
-    sender = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=DO_NOTHING, default='1')
+    sender = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.DO_NOTHING, default='1')
 
     def save(self, *args, **kwargs):
         self.timestamp = timezone.now()

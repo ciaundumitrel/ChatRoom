@@ -45,11 +45,10 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
     async def receive(self, text_data):
         text_data_json = json.loads(text_data)
+
         message = text_data_json["message"]
         sender = text_data_json["sender"]
         receiver = text_data_json['receiver']
-
-        print(receiver, sender, message)
 
         await db_message(receiver=receiver, sender=sender, message=message)
 

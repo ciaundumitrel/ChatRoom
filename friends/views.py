@@ -6,5 +6,4 @@ from django.shortcuts import render
 
 def friend_request(request):
     if request.method == 'POST':
-        print(request)
         return HttpResponse('asdasda')
